@@ -34,7 +34,7 @@ enum layers {
 #define SYM      MO(_SYM)
 #define NAV      MO(_NAV)
 #define FKEYS    MO(_FUNCTION)
-#define ADJUST   MO(_ADJUST)
+#define ADJUST   LM(_ADJUST, MOD_LGUI)
 
 #define CTL_ESC  MT(MOD_LCTL, KC_ESC)
 #define CMD_ESC  MT(MOD_LGUI, KC_ESC)
@@ -254,12 +254,20 @@ bool oled_task_user(void) {
 bool encoder_update_user(uint8_t index, bool clockwise) {
 
     if (index == 0) {
+      if (get_highest_layer(layer_state|default_layer_state) == _ADJUST) {
+        if (clockwise) {
+            tap_code16(KC_TAB);
+        } else {
+            tap_code16(S(KC_TAB));
+        }         
+      } else {
         // Volume control
         if (clockwise) {
             tap_code16(G(S(KC_RBRC)));
         } else {
             tap_code16(G(S(KC_LBRC)));
         }
+      }
     } else if (index == 1) {
         // Page up/Page down
         if (clockwise) {
